@@ -5,12 +5,12 @@ data:
   discovered:
     syn17014798:
       path: data/discovered/snsc_2001-2015.rds
-      modified: '2018-10-23T19:44:44.669Z'
-      version: 1.0
+      modified: '2018-10-29T23:27:34.107Z'
+      version: 4.0
     syn17015045:
       path: data/discovered/snsc_2011-2015.rds
-      modified: '2018-10-23T21:37:12.608Z'
-      version: 1.0
+      modified: '2018-10-29T23:43:07.906Z'
+      version: 3.0
     syn17015084:
       path: data/discovered/icd10_2018.rds
       modified: '2018-10-23T22:59:05.106Z'
@@ -19,4 +19,35 @@ data:
       path: data/discovered/sim_2001-2015.rds
       modified: '2018-10-24T00:12:30.811Z'
       version: 1.0
-  derived: ~
+    syn17016749:
+      path: data/discovered/census_illit.csv
+      modified: '2018-10-26T23:06:44.246Z'
+      version: 1.0
+    syn17016754:
+      path: data/discovered/census_educ15.csv
+      modified: '2018-10-26T23:12:18.022Z'
+      version: 1.0
+    syn17016757:
+      path: data/discovered/census_educ18_24.csv
+      modified: '2018-10-26T23:14:52.206Z'
+      version: 1.0
+    syn17016760:
+      path: data/discovered/census_elderly.csv
+      modified: '2018-10-26T23:15:32.151Z'
+      version: 1.0
+    syn17016763:
+      path: data/discovered/census_income.csv
+      modified: '2018-10-26T23:16:05.014Z'
+    syn17016843:
+      path: data/discovered/hospital_information.csv
+      modified: '2018-10-27T22:36:41.061Z'
+      version: 1.0
+  derived:
+    syn17015647:
+      path: data/derived/snsc_state.csv
+      modified: '2018-10-25T06:40:23.961Z'
+      version: 1.0
+    syn17016838:
+      path: data/derived/snsc_sample_1.6m.rds
+      modified: '2018-10-27T21:58:34.814Z'
+      version: 1.0
