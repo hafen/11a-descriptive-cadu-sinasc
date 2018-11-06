@@ -106,7 +106,6 @@ abline(h = qt)
 hosp_deliv$hosp_deliv_type <- "mixed"
 hosp_deliv$hosp_deliv_type[hosp_deliv$pct_ces <= 0.25] <- "most_vaginal"
 hosp_deliv$hosp_deliv_type[hosp_deliv$pct_ces >= 0.75] <- "most_cesarean"
-hosp_deliv$hosp_deliv_type[hosp_deliv$pct_ces >= 0.75] <- "most_cesarean"
 hosp_deliv$hosp_deliv_type[hosp_deliv$n < 100] <- "small_hospital"
 
 mdat <- select(hosp_deliv, health_estbl_code, pct_ces, hosp_deliv_type)
@@ -162,7 +161,9 @@ tmp <- head(snsc2, 100)
 # add weight for gestational age z-score
 library(growthstandards)
 
-snsc2$brthwt_z <- igb_wtkg2zscore(snsc2$gest_weeks * 7, snsc2$brthwt_g / 1000)
+snsc2 <- filter(snsc2, !is.na(sex))
+
+snsc2$brthwt_z <- igb_wtkg2zscore(snsc2$gest_weeks * 7, snsc2$brthwt_g / 1000, sex = as.character(snsc2$sex))
 
 hist(snsc2$brthwt_z)
 
