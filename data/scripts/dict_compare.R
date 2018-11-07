@@ -29,15 +29,6 @@ setdiff(setdiff(a$variavel, snsc_dict$name), intersect(cdcs_dict$name, mss))
 
 dplyr::select(snsc_dict, name, label_en) %>% data.frame()
 
-
-name
-name_en
-label
-label_en
-map
-map_en
-type
-
 snsccdu <- a %>%
   select(-type) %>%
   rename(
@@ -90,4 +81,6 @@ snsccdu %>%
 snsccdu$name_en[snsccdu$label_en == "Code of household waste"] <- "house_waste"
 snsccdu$name_en[snsccdu$label_en == "Household sanitary disposal code"] <- "house_sanitary"
 snsccdu$name_en[snsccdu$label_en == "Code of household water supply"] <- "house_water"
+
+
 
