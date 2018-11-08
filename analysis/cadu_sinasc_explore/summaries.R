@@ -1,20 +1,3 @@
-fcts <- c("sex", "cong_anom", "birth_place", "marital_status", "m_edu_level", 
-  "m_edu_level_aggregated", "m_race", "preg_type", "deliv_type", 
-  "n_prenat_visit_cat", "gest_method", "presentation", "labor_induced", 
-  "ces_pre_labor", "birth_assist", "household_type", "household_material", 
-  "household_water", "household_sanitary", "household_lighting", 
-  "household_waste", "bf", "child_death", "n_children", "m_age_cat", "education_recl",
-  "hour_dat", "major_degree")
-
-d <- filter(d, abs(brthwt_z) < 5 | is.na(brthwt_z))
-d <- filter(d, gest_weeks > 20 | is.na(gest_weeks))
-
-library(brazilgeo)
-mc <- br_muni_codes
-mc$resi_muni_code <- substr(mc$muni_code, 1, 6)
-mc$muni_code <- NULL
-d$resi_muni_code <- as.character(d$resi_muni_code)
-d <- left_join(d, select(mc, resi_muni_code, micro_code, meso_code, state_code, region_code))
 
 source("_fns.R")
 
@@ -36,11 +19,11 @@ for (nm in names(brthwt_z_summ)) {
   } else {
     lab <- paste0(lab, " (", nm, ")")
   }
-  dd <- filter(brthwt_z_summ[[nm]], n > 50)
+  dd <- filter(brthwt_z_summ[[nm]], n > 50 & !is.nan(mean))
   rng <- range(c(dd$mean - 2 * dd$se, dd$mean + 2 * dd$se))
   if (diff(rng) < 1)
     rng <- mean(rng) + c(-1, 1) * 0.5
-
+  
   p <- plot_var_by(filter(brthwt_z_summ[[nm]], n > 50),
     "Birth Weight for GA Z-Score",
     nm,
@@ -76,11 +59,11 @@ for (nm in names(gest_weeks_summ)) {
   } else {
     lab <- paste0(lab, " (", nm, ")")
   }
-  dd <- filter(gest_weeks_summ[[nm]], n > 50)
+  dd <- filter(gest_weeks_summ[[nm]], n > 50 & !is.nan(mean))
   rng <- range(c(dd$mean - 2 * dd$se, dd$mean + 2 * dd$se))
   if (diff(rng) < 1)
     rng <- mean(rng) + c(-1, 1) * 0.5
-
+  
   p <- plot_var_by(dd,
     "Gestational Age at Birth (weeks)",
     nm,
@@ -99,8 +82,6 @@ gest_weeks_summ_dat <- bind_rows(lapply(names(gest_weeks_summ), function(x) {
 readr::write_csv(gest_weeks_summ_dat, file.path(pth2, "summ_dat.csv"))
 
 
-fcts <- names(which(sapply(d, is.factor)))
-
 deliv_type_summ <- lapply(c(fcts, addl), function(x) {
   message(x)
   summarize_bvar_by(d, deliv_type, !! sym(x), "Cesarean")
@@ -117,14 +98,14 @@ for (nm in names(deliv_type_summ)) {
   } else {
     lab <- paste0(lab, " (", nm, ")")
   }
-
+  
   p <- plot_bvar_by(
     filter(deliv_type_summ[[nm]], n > 50),
     "Proportion of Cesarean Deliveries",
     nm,
     xlab = lab) +
     ylim(c(0, 1))
-
+  
   ggsave(file.path(pth3, paste0(nm, ".png")), width = 6, height = 6)
 }
 
@@ -140,6 +121,199 @@ readr::write_csv(deliv_type_summ_dat, file.path(pth3, "summ_dat.csv"))
 
 
 
+brthwt_cat_summ <- lapply(c(fcts, addl), function(x) {
+  message(x)
+  summarize_bvar_by(d, brthwt_cat, !! sym(x), "<2500g")
+})
+names(brthwt_cat_summ) <- c(fcts, addl)
+
+pth4 <- "results/cadu_sinasc/brthwt_cat_summ"
+dir.create(pth4, recursive = TRUE)
+
+for (nm in names(brthwt_cat_summ)) {
+  lab <- filter(snsccdu, name_en == nm)$label_en
+  if (length(lab) == 0) {
+    lab <- nm
+  } else {
+    lab <- paste0(lab, " (", nm, ")")
+  }
+  dd <- filter(brthwt_cat_summ[[nm]], n > 50 & !is.nan(p))
+  dd <- dd[complete.cases(dd),]
+  rng <- range(c(dd$p - 2 * dd$se, dd$p + 2 * dd$se))
+  if (diff(rng) < 0.25 & all(dd$p < 0.25))
+    rng <- c(0, 0.25)
+  
+  p <- plot_bvar_by(
+    filter(brthwt_cat_summ[[nm]], n > 50),
+    "Proportion of Low Birth Weight",
+    nm,
+    xlab = lab) +
+    ylim(rng)
+  
+  ggsave(file.path(pth4, paste0(nm, ".png")), width = 6, height = 6)
+}
+
+# note: sex=NA have high proportion of low birth weight (very premature?)
+# sex          n      p        se
+# <fct>    <int>  <dbl>     <dbl>
+#   1 Male   7354402 0.0668 0.0000921
+#   2 Female 6995136 0.0801 0.000103 
+#   3 NA        2446 0.434  0.0100
+
+brthwt_cat_summ_dat <- bind_rows(lapply(names(brthwt_cat_summ), function(x) {
+  cur <- filter(brthwt_cat_summ[[x]], n > 50)
+  data_frame(nm = x, sd = sd(cur$p), nrow = nrow(cur))
+})) %>%
+  arrange(-sd) %>%
+  filter(nm != "brthwt_cat")
+
+readr::write_csv(brthwt_cat_summ_dat, file.path(pth4, "summ_dat.csv"))
+
+
+
+sga_summ <- lapply(c(fcts, addl), function(x) {
+  message(x)
+  summarize_bvar_by(d, brthwt_centile_cat, !! sym(x), "Percentile < 10 (SGA)")
+})
+names(sga_summ) <- c(fcts, addl)
+
+pth5 <- "results/cadu_sinasc/sga_summ"
+dir.create(pth5, recursive = TRUE)
+
+for (nm in names(sga_summ)) {
+  lab <- filter(snsccdu, name_en == nm)$label_en
+  if (length(lab) == 0) {
+    lab <- nm
+  } else {
+    lab <- paste0(lab, " (", nm, ")")
+  }
+  dd <- filter(sga_summ[[nm]], n > 50 & !is.nan(p))
+  dd <- dd[complete.cases(dd),]
+  rng <- range(c(dd$p - 2 * dd$se, dd$p + 2 * dd$se))
+  if (diff(rng) < 0.25 & all(dd$p < 0.25))
+    rng <- c(0, 0.25)
+  
+  p <- plot_bvar_by(
+    filter(sga_summ[[nm]], n > 50),
+    "Proportion of SGA",
+    nm,
+    xlab = lab) +
+    ylim(rng)
+  
+  ggsave(file.path(pth5, paste0(nm, ".png")), width = 6, height = 6)
+}
+
+sga_summ_dat <- bind_rows(lapply(names(sga_summ), function(x) {
+  cur <- filter(sga_summ[[x]], n > 50)
+  data_frame(nm = x, sd = sd(cur$p), nrow = nrow(cur))
+})) %>%
+  arrange(-sd) %>%
+  filter(nm != "brthwt_centile_cat")
+
+readr::write_csv(sga_summ_dat, file.path(pth5, "summ_dat.csv"))
+
+
+
+lga_summ <- lapply(c(fcts, addl), function(x) {
+  message(x)
+  summarize_bvar_by(d, brthwt_centile_cat, !! sym(x), "Percentile > 90 (LGA)")
+})
+names(lga_summ) <- c(fcts, addl)
+
+pth7 <- "results/cadu_sinasc/lga_summ"
+dir.create(pth7, recursive = TRUE)
+
+for (nm in names(lga_summ)) {
+  lab <- filter(snsccdu, name_en == nm)$label_en
+  if (length(lab) == 0) {
+    lab <- nm
+  } else {
+    lab <- paste0(lab, " (", nm, ")")
+  }
+  dd <- filter(lga_summ[[nm]], n > 50 & !is.nan(p))
+  dd <- dd[complete.cases(dd),]
+  rng <- range(c(dd$p - 2 * dd$se, dd$p + 2 * dd$se))
+  if (diff(rng) < 0.25 & all(dd$p < 0.25))
+    rng <- c(0, 0.25)
+  
+  p <- plot_bvar_by(
+    filter(lga_summ[[nm]], n > 50),
+    "Proportion of LGA",
+    nm,
+    xlab = lab) +
+    ylim(rng)
+  
+  ggsave(file.path(pth7, paste0(nm, ".png")), width = 6, height = 6)
+}
+
+lga_summ_dat <- bind_rows(lapply(names(lga_summ), function(x) {
+  cur <- filter(lga_summ[[x]], n > 50)
+  data_frame(nm = x, sd = sd(cur$p), nrow = nrow(cur))
+})) %>%
+  arrange(-sd) %>%
+  filter(nm != "brthwt_centile_cat")
+
+readr::write_csv(lga_summ_dat, file.path(pth7, "summ_dat.csv"))
+
+
+
+# look at categorical outcomes vs. categorical risk factors over time and space
+
+nm <- "brthwt_centile_cat"
+rf <- "n_prenat_visit_cat"
+val <- "Percentile > 90 (LGA)"
+
+summarize_outcome_st <- function(d, nm, rf, val) {
+  summ <- d %>%
+    group_by(!! sym(rf), state_code) %>%
+    summarise(
+      n = length(which(!is.na(!! sym(nm)))),
+      p = length(which(!! sym(nm) == val)) / n,
+      se = sqrt(p * (1 - p) / n)
+    )
+  summ <- summ[complete.cases(summ),]
+  
+  rng <- range(c(summ$p - 2 * summ$se, summ$p + 2 * summ$se))
+  names(summ)[1] <- "yvar"
+  summ$yvar2 <- as.numeric(summ$yvar)
+  attribute(summ, "rf") <- rf
+  attribute(summ, "nm") <- nm
+  summ
+}
+
+plot_outcome_st <- function(summ) {
+  atrs <- attributes(summ)
+  ggplot(summ, aes(yvar, p, xmin = yvar2 - 0.5, xmax = yvar2 + 0.5)) +
+    geom_rect(aes(ymin = rng[1], ymax = p), fill = tableau10[1], alpha = 0.6) +
+    geom_rect(aes(ymin = p, ymax = rng[2]), fill = tableau10[1], alpha = 0.3) +
+    theme_bw() +
+    scale_x_discrete(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    geom_point(size = 2) +
+    geom_errorbar(aes(ymin = p - 2 * se, ymax = p + 2 * se), width = 0.2) +
+    facet_geo(~ state_code, grid = "br_states_grid2", label = "name") +
+    theme(
+      strip.text.x = element_text(margin = margin(0.1, 0, 0.1, 0, "cm"), size = 7),
+      axis.text.x = element_text(angle = 60, hjust = 1)) +
+    labs(x = atr$rf, y = atr$nm)
+}
+
+lga_rf_geo_summ <- lapply(fcts, function(x) {
+  message(x)
+  summarize_outcome_st(d, nm = "brthwt_centile_cat", rf = x, val = "Percentile > 90 (LGA)")
+})
+names(lga_rf_geo_summ) <- fcts
+
+pth8 <- "results/cadu_sinasc/lga_rf_geo_summ"
+dir.create(pth8, recursive = TRUE)
+
+
+
+
+
+
+
+
 lapply(fcts, function(x) length(levels(d[[x]])))
 
 geo_time_summ <- lapply(fcts, function(x) {
@@ -148,15 +322,15 @@ geo_time_summ <- lapply(fcts, function(x) {
 })
 names(geo_time_summ) <- fcts
 
-pth3 <- "results/cadu_sinasc/geo_time_summ"
-dir.create(pth3, recursive = TRUE)
+pth6 <- "results/cadu_sinasc/geo_time_summ"
+dir.create(pth6, recursive = TRUE)
 
 for (nm in names(geo_time_summ)) {
   plot_st_yr(geo_time_summ[[nm]], nm, llab = nm)
-  ggsave(file.path(pth3, paste0(nm, ".png")), width = 11, height = 12)
+  ggsave(file.path(pth6, paste0(nm, ".png")), width = 11, height = 12)
 }
 
-# now with keepnig NAs
+# now with keeping NAs
 geo_time_summ2 <- lapply(fcts, function(x) {
   message(x)
   summarize_st_yr(d, !! sym(x), keep_na = TRUE)
@@ -165,7 +339,7 @@ names(geo_time_summ2) <- fcts
 
 for (nm in names(geo_time_summ2)) {
   plot_st_yr(geo_time_summ2[[nm]], nm, llab = nm)
-  ggsave(file.path(pth3, paste0(nm, "_na.png")), width = 11, height = 12)
+  ggsave(file.path(pth6, paste0(nm, "_na.png")), width = 11, height = 12)
 }
 
 
@@ -176,3 +350,8 @@ hist(d$gest_weeks)
 hist(d$brthwt_z)
 mean(d$brthwt_z, na.rm = TRUE)
 # 0.27
+
+
+
+
+
