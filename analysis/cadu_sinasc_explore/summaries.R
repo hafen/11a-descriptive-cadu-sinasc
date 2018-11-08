@@ -36,13 +36,17 @@ for (nm in names(brthwt_z_summ)) {
   } else {
     lab <- paste0(lab, " (", nm, ")")
   }
+  dd <- filter(brthwt_z_summ[[nm]], n > 50)
+  rng <- range(c(dd$mean - 2 * dd$se, dd$mean + 2 * dd$se))
+  if (diff(rng) < 1)
+    rng <- mean(rng) + c(-1, 1) * 0.5
 
   p <- plot_var_by(filter(brthwt_z_summ[[nm]], n > 50),
     "Birth Weight for GA Z-Score",
     nm,
     xlab = lab,
     se = TRUE)
-  p <- p + geom_abline(slope = 0, intercept = 0, alpha = 0.3)
+  p <- p + geom_abline(slope = 0, intercept = 0, alpha = 0.3) + ylim(rng)
   ggsave(file.path(pth, paste0(nm, ".png")), width = 6, height = 6)
 }
 
@@ -72,13 +76,17 @@ for (nm in names(gest_weeks_summ)) {
   } else {
     lab <- paste0(lab, " (", nm, ")")
   }
+  dd <- filter(gest_weeks_summ[[nm]], n > 50)
+  rng <- range(c(dd$mean - 2 * dd$se, dd$mean + 2 * dd$se))
+  if (diff(rng) < 1)
+    rng <- mean(rng) + c(-1, 1) * 0.5
 
-  p <- plot_var_by(filter(gest_weeks_summ[[nm]], n > 50),
+  p <- plot_var_by(dd,
     "Gestational Age at Birth (weeks)",
     nm,
     xlab = lab,
     se = TRUE)
-  p <- p + geom_abline(slope = 0, intercept = 0, alpha = 0.3)
+  p <- p + geom_abline(slope = 0, intercept = 0, alpha = 0.3) + ylim(rng)
   ggsave(file.path(pth2, paste0(nm, ".png")), width = 6, height = 6)
 }
 
@@ -89,6 +97,47 @@ gest_weeks_summ_dat <- bind_rows(lapply(names(gest_weeks_summ), function(x) {
   arrange(-sd)
 
 readr::write_csv(gest_weeks_summ_dat, file.path(pth2, "summ_dat.csv"))
+
+
+fcts <- names(which(sapply(d, is.factor)))
+
+deliv_type_summ <- lapply(c(fcts, addl), function(x) {
+  message(x)
+  summarize_bvar_by(d, deliv_type, !! sym(x), "Cesarean")
+})
+names(deliv_type_summ) <- c(fcts, addl)
+
+pth3 <- "results/cadu_sinasc/deliv_type_summ"
+dir.create(pth3, recursive = TRUE)
+
+for (nm in names(deliv_type_summ)) {
+  lab <- filter(snsccdu, name_en == nm)$label_en
+  if (length(lab) == 0) {
+    lab <- nm
+  } else {
+    lab <- paste0(lab, " (", nm, ")")
+  }
+
+  p <- plot_bvar_by(
+    filter(deliv_type_summ[[nm]], n > 50),
+    "Proportion of Cesarean Deliveries",
+    nm,
+    xlab = lab) +
+    ylim(c(0, 1))
+
+  ggsave(file.path(pth3, paste0(nm, ".png")), width = 6, height = 6)
+}
+
+deliv_type_summ_dat <- bind_rows(lapply(names(deliv_type_summ), function(x) {
+  cur <- filter(deliv_type_summ[[x]], n > 50)
+  data_frame(nm = x, sd = sd(cur$p), nrow = nrow(cur))
+})) %>%
+  arrange(-sd) %>%
+  filter(nm != "deliv_type")
+
+readr::write_csv(deliv_type_summ_dat, file.path(pth3, "summ_dat.csv"))
+
+
 
 
 lapply(fcts, function(x) length(levels(d[[x]])))

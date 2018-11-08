@@ -60,6 +60,38 @@ plot_var_by <- function(dat, x, by, se = FALSE, xlab = NULL, ylab = NULL) {
   p
 }
 
+# for a bivariate outcome
+summarize_bvar_by <- function(dat, x, by, val) {
+  x <- enquo(x)
+  by <- enquo(by)
+
+  dat %>%
+    group_by(!!by) %>%
+    summarise(
+      n = length(which(!is.na(!!x))),
+      p = length(which(!!x == val)) / n,
+      se = sqrt(p * (1 - p) / n)
+    )
+}
+
+plot_bvar_by <- function(dat, x, by, xlab = NULL, ylab = NULL) {
+  dat <- dat[!is.na(dat[[by]]), ]
+
+  dat$by <- dat[[by]]
+  if (is.null(xlab))
+    xlab <- by
+  if (is.null(ylab))
+    ylab <- x
+
+  p <- ggplot(dat, aes(by, p)) +
+    geom_point(size = 2) +
+    theme_bw() +
+    labs(x = xlab, y = ylab)
+
+  p + geom_errorbar(aes(ymin = p - 2 * se, ymax = p + 2 * se), width = 0.2)
+}
+
+
 ## functions to summarize and plot by state and year
 ##---------------------------------------------------------
 
