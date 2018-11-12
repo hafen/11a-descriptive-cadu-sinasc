@@ -216,7 +216,7 @@ class lightgbmExperiment(Experiment):
         }
 
         self.constant_params = {
-            'num_threads ': self.threads,
+            'num_threads': self.threads,
             'tree_learner': tree_learner,
             'objective': self.metric,
             'metric': self.eval_metric,
@@ -250,6 +250,8 @@ class lightgbmExperiment(Experiment):
         return bst, results
 
     def get_dataset_pair(self, X_train, y_train, X_test, y_test, cat_cols=None):
+        if self.metric in {'multiclass', 'multiclassova'}:
+            self.constant_params['num_class'] = len(np.unique(y_train))
         if cat_cols is None:
             categorical_feature = []
         else:
