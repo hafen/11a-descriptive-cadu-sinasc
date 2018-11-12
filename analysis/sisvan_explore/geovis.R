@@ -17,8 +17,29 @@ country_data <- data.frame(
   wasting = mean(state_data$wasting),
   overweight_wh = mean(state_data$overweight_wh),
   overweight_bmi = mean(state_data$overweight_bmi),
-  overweight_stunting_ratio1 = mean(state_data$overweight_stunting_ratio1),
-  overweight_stunting_ratio2 = mean(state_data$overweight_stunting_ratio2),
+  stunting_wh_ratio = mean(state_data$stunting_wh_ratio),
+  stunting_bmi_ratio = mean(state_data$stunting_bmi_ratio),
+  wh_stunting_ratio = mean(state_data$wh_stunting_ratio),
+  bmi_stunting_ratio = mean(state_data$bmi_stunting_ratio),
+
+  stunting02 = mean(state_data$stunting02),
+  wasting02 = mean(state_data$wasting02),
+  overweight_wl02 = mean(state_data$overweight_wl02),
+  overweight_bmi02 = mean(state_data$overweight_bmi02),
+  stunting_wl_ratio02 = mean(state_data$stunting_wl_ratio02),
+  stunting_bmi_ratio02 = mean(state_data$stunting_bmi_ratio02),
+  wl_stunting_ratio02 = mean(state_data$wl_stunting_ratio02),
+  bmi_stunting_ratio02 = mean(state_data$bmi_stunting_ratio02),
+
+  stunting25 = mean(state_data$stunting25),
+  wasting25 = mean(state_data$wasting25),
+  overweight_wh25 = mean(state_data$overweight_wh25),
+  overweight_bmi25 = mean(state_data$overweight_bmi25),
+  stunting_wh_ratio25 = mean(state_data$stunting_wh_ratio25),
+  stunting_bmi_ratio25 = mean(state_data$stunting_bmi_ratio25),
+  wh_stunting_ratio25 = mean(state_data$wh_stunting_ratio25),
+  bmi_stunting_ratio25 = mean(state_data$bmi_stunting_ratio25),
+
   n_haz = mean(state_data$n_haz),
   n_whz = mean(state_data$n_whz),
   n_bmi = mean(state_data$n_bmi),
@@ -28,22 +49,55 @@ country_data <- data.frame(
 state_data$country_code <- "BRA"
 muni_data$country_code <- "BRA"
 
-plot(sort(log10(muni_data$overweight_stunting_ratio1)))
-quantile(muni_data$overweight_stunting_ratio1, 0.99)
+hist(muni_data$stunting_wl_ratio02)
+hist(log10(muni_data$stunting_wl_ratio02))
+abline(h = 4)
+plot(sort((muni_data$stunting_wl_ratio02)))
+quantile(muni_data$stunting_wl_ratio02, 0.99, na.rm = TRUE)
+
+plot(sort(log10(muni_data$stunting_wh_ratio25)))
+quantile(muni_data$stunting_wh_ratio25, 0.99)
 
 vars <- data_frame(
-  name = c("stunting", "wasting", "overweight_wh",
-"overweight_bmi", "overweight_stunting_ratio1", "overweight_stunting_ratio2", "n_haz", "n_whz", "n_bmi"),
+  name = c(
+    "stunting", "wasting", "overweight_wh",
+"overweight_bmi", "stunting_wh_ratio", "stunting_bmi_ratio", "wh_stunting_ratio", "bmi_stunting_ratio",
+    "stunting02", "wasting02", "overweight_wl02",
+"overweight_bmi02", "stunting_wl_ratio02", "stunting_bmi_ratio02", "wl_stunting_ratio02", "bmi_stunting_ratio02",
+    "stunting25", "wasting25", "overweight_wh25",
+"overweight_bmi25", "stunting_wh_ratio25", "stunting_bmi_ratio25", "wh_stunting_ratio25", "bmi_stunting_ratio25",
+    "n_haz", "n_whz", "n_bmi"),
   desc = c(
-    "Percent 0-5y stunted children",
-    "Percent 0-5y wasted children",
-    "Percent 0-5 y overweight children (WHZ)",
-    "Percent 0-5y overweight children (BMI)",
-    "Prevalence of overweight (WHZ) / stunting",
-    "Prevalence of overweight (BMI) / stunting",
-    "Number of children evaluated for HAZ",
-    "Number of children evaluated for WHZ",
-    "Number of children evaluated for BMI"
+    "% 0-5y stunted children",
+    "% 0-5y wasted children",
+    "% 0-5y overweight children (WHZ)",
+    "% 0-5y overweight children (BMI)",
+    "0-5y stunting / overweight (WHZ)",
+    "0-5y stunting / overweight (BMI)",
+    "0-5y overweight (WHZ) / stunting",
+    "0-5y overweight (BMI) / stunting",
+
+    "% 0-2y stunted children",
+    "% 0-2y wasted children",
+    "% 0-2y overweight children (WLZ)",
+    "% 0-2y overweight children (BMI)",
+    "0-2y stunting / overweight (WLZ)",
+    "0-2y stunting / overweight (BMI)",
+    "0-2y overweight (WLZ) / stunting",
+    "0-2y overweight (BMI) / stunting",
+
+    "% 2-5y stunted children",
+    "% 2-5y wasted children",
+    "% 2-5 y overweight children (WHZ)",
+    "% 2-5y overweight children (BMI)",
+    "2-5y stunting / overweight (WHZ)",
+    "2-5y stunting / overweight (BMI)",
+    "2-5y overweight (WHZ) / stunting",
+    "2-5y overweight (BMI) / stunting",
+
+    "# 0-5y child evaluated for HAZ",
+    "# 0-5y child evaluated for WHZ",
+    "# 0-5y child evaluated for BMI"
   )
 )
 
@@ -74,15 +128,11 @@ for (i in seq_len(nrow(vars))) {
   var_info[[nm]] <- cur
 }
 
-muni_data <- muni_data %>%
-  select(-muni_name, -micro_name, -micro_code, -meso_name,
-    -meso_code, -state_name, -region_name, -region_code)
-
 geovis(geo, path = "~/Desktop/geowidget",
   name = "Brazil SISVAN-Web Explorer",
   view_level = "country",
   view_country_code = "BRA",
-  default_var = "stunting",
+  default_var = "stunting02",
   var_info = var_info,
   country_data = country_data,
   state_data = state_data,

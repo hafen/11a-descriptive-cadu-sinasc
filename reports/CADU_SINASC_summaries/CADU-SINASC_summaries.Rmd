@@ -1,0 +1,167 @@
+---
+title: "CADU-SINASC Descriptive Anlaysis Visualizations"
+author: Ryan Hafen
+output:
+  rmdformats::html_clean:
+    fig_width: 8
+    fig_height: 6
+    highlight: kate
+    thumbnails: false
+    lightbox: false
+    gallery: false
+    self_contained: false
+---
+
+
+<link rel="stylesheet" href="lib/magnific-popup.css">
+<script src="lib/jquery.magnific-popup.js"></script>
+
+<style>
+  .popup-gallery {
+    width: 800px
+  }
+  .item {
+    position: relative;
+    padding: 0px;
+    display: inline-block;
+  }
+  .item img {
+    margin: 0px;
+    padding: 0px;
+  }
+  .item-label {
+    position: absolute;
+    top: 0;
+    width: 150px;
+    text-align: center;
+    background: black;
+    opacity: 0.6;
+    color: white;
+  }
+  .mfp-title {
+    color: darkgray !important;
+    padding-left: 10px !important;
+  }
+  .mfp-counter {
+    color: darkgray !important;
+    padding-right: 10px !important;
+  }
+</style>
+
+<script>
+$(document).ready(function() {
+	$('.popup-gallery').magnificPopup({
+		delegate: 'a',
+		type: 'image',
+		tLoading: 'Loading plot #%curr%...',
+		mainClass: 'mfp-img-mobile',
+		gallery: {
+			enabled: true,
+			navigateByImgClick: true,
+			preload: [0,1] // Will preload 0 - before current, and 1 after the current image
+		},
+		image: {
+			tError: '<a href="%url%">The plot #%curr%</a> could not be loaded.',
+			titleSrc: function(item) {
+				return item.el.attr('title');
+			}
+		}
+	});
+});
+</script>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+plot_gallery <- function(path) {
+  f <- list.files(path, full.names = TRUE,
+    pattern = ".png")
+  f2 <- gsub("plots/", "plots/_thumbs/", f)
+
+  library(png)
+  img <- readPNG(f[1])
+
+  dm <- dim(img)
+  width <- 150
+  height <- width * dm[1] / dm[2]
+
+  nm <- basename(f)
+  nm <- gsub("\\.png", "", nm)
+
+  aa <- paste0("<div class='item'><a href='", f, "' title='", basename(path), "/", nm, ".png'><img src='",
+    f2, "' width='", width, "', height='", height, "'><div class='item-label'>", nm, "</div></a></div>")
+
+  cat(paste0("<div class='popup-gallery'>",
+    paste(aa, collapse = ""), "</div>"))
+}
+```
+
+## Overview
+
+This document provides several plots of descriptive statistics of outcomes of interest vs. various risk factors in the CADU-SINASC linked dataset. Unless otherwise noted, the plots display point estimates of means or proportions, with 95% confidence intervals for those estimates.
+
+## Birth weight z-score
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/brthwt_z_summ")
+```
+
+## LBW
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/brthwt_cat_summ")
+```
+
+## SGA
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/sga_summ")
+```
+
+## SGA by state
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/sga_rf_geo_summ")
+```
+
+## LGA
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/lga_summ")
+```
+
+## LGA by state
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/lga_rf_geo_summ")
+```
+
+## GA at birth
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/gest_weeks_summ")
+```
+
+## GA at birth by state
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/preterm_rf_geo_summ")
+```
+
+## Cesarean
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/deliv_type_summ")
+```
+
+## Cesarean by state
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/cesarean_rf_geo_summ")
+```
+
+## Variable distribution by year and state
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("plots/geo_time_summ")
+```
