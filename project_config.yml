@@ -9,8 +9,8 @@ data:
       version: 4.0
     syn17015045:
       path: data/discovered/snsc_2011-2015.rds
-      modified: '2018-10-29T23:43:07.906Z'
-      version: 3.0
+      modified: '2018-11-13T18:21:47.318Z'
+      version: 4.0
     syn17015084:
       path: data/discovered/icd10_2018.rds
       modified: '2018-10-23T22:59:05.106Z'

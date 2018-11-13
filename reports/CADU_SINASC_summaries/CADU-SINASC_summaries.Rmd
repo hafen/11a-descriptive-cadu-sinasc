@@ -100,6 +100,10 @@ plot_gallery <- function(path) {
 
 This document provides several plots of descriptive statistics of outcomes of interest vs. various risk factors in the CADU-SINASC linked dataset. Unless otherwise noted, the plots display point estimates of means or proportions, with 95% confidence intervals for those estimates.
 
+Please make note of the y-axis limits when looking at the plots. The range of the axis is not consistent across plots, so some effects may appear larger than others. In cases where the point estimates don't vary too much between groups within the same plot, extra padding has been added to the axis to help with this.
+
+Every thumbnail image below can be clicked on for closer viewing.
+
 ## Birth weight z-score
 
 ```{r echo=FALSE, results="asis"}
