@@ -94,6 +94,79 @@ plot_gallery <- function(path) {
   cat(paste0("<div class='popup-gallery'>",
     paste(aa, collapse = ""), "</div>"))
 }
+
+sp_summ1 <- list(`No Major Degree` = structure(list(preterm = structure(1:9, .Label = c("Extremely Preterm", 
+"Very Preterm", "Premature", "Late Premature", "Early Term", 
+"Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(866L, 958L, 1586L, 10168L, 38825L, 77724L, 10360L, 
+    1810L, 635L), Cesarean = c(489L, 1272L, 1694L, 9197L, 43563L, 
+    57172L, 8389L, 1601L, 525L), `Total Births` = c(1355L, 2230L, 
+    3280L, 19365L, 82388L, 134896L, 18749L, 3411L, 1160L), `Percent Cesarean` = c(36.1, 
+    57, 51.6, 47.5, 52.9, 42.4, 44.7, 46.9, 45.3)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)), `Major Degree` = structure(list(
+    preterm = structure(1:9, .Label = c("Extremely Preterm", 
+    "Very Preterm", "Premature", "Late Premature", "Early Term", 
+    "Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(83L, 76L, 106L, 874L, 4226L, 6252L, 693L, 97L, 
+    28L), Cesarean = c(155L, 367L, 539L, 4307L, 30326L, 21789L, 
+    1114L, 217L, 63L), `Total Births` = c(238L, 443L, 645L, 5181L, 
+    34552L, 28041L, 1807L, 314L, 91L), `Percent Cesarean` = c(65.1, 
+    82.8, 83.6, 83.1, 87.8, 77.7, 61.6, 69.1, 69.2)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)))
+
+sp_summ2 <- list(`No schooling` = structure(list(preterm = structure(1:9, .Label = c("Extremely Preterm", 
+"Very Preterm", "Premature", "Late Premature", "Early Term", 
+"Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(2L, 1L, 4L, 30L, 72L, 154L, 20L, 3L, 1L), Cesarean = c(2L, 
+    1L, 6L, 19L, 52L, 83L, 9L, 4L, 2L), `Total Births` = c(4L, 
+    2L, 10L, 49L, 124L, 237L, 29L, 7L, 3L), `Percent Cesarean` = c(50, 
+    50, 60, 38.8, 41.9, 35, 31, 57.1, 66.7)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)), `Fundamental Education I (1ª a 4ª série)` = structure(list(
+    preterm = structure(1:9, .Label = c("Extremely Preterm", 
+    "Very Preterm", "Premature", "Late Premature", "Early Term", 
+    "Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(23L, 36L, 64L, 340L, 1260L, 2671L, 376L, 78L, 
+    24L), Cesarean = c(12L, 42L, 41L, 251L, 868L, 1409L, 245L, 
+    49L, 17L), `Total Births` = c(35L, 78L, 105L, 591L, 2128L, 
+    4080L, 621L, 127L, 41L), `Percent Cesarean` = c(34.3, 53.8, 
+    39, 42.5, 40.8, 34.5, 39.5, 38.6, 41.5)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)), `Fundamental Education II (5ª a 8ª série)` = structure(list(
+    preterm = structure(1:9, .Label = c("Extremely Preterm", 
+    "Very Preterm", "Premature", "Late Premature", "Early Term", 
+    "Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(233L, 319L, 510L, 3042L, 10827L, 21560L, 2904L, 
+    568L, 216L), Cesarean = c(99L, 274L, 363L, 1632L, 5821L, 
+    9971L, 1814L, 348L, 123L), `Total Births` = c(332L, 593L, 
+    873L, 4674L, 16648L, 31531L, 4718L, 916L, 339L), `Percent Cesarean` = c(29.8, 
+    46.2, 41.6, 34.9, 35, 31.6, 38.4, 38, 36.3)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)), `Middle Education (antigo 2º Grau)` = structure(list(
+    preterm = structure(1:9, .Label = c("Extremely Preterm", 
+    "Very Preterm", "Premature", "Late Premature", "Early Term", 
+    "Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(572L, 561L, 939L, 6325L, 24972L, 50377L, 6683L, 
+    1109L, 367L), Cesarean = c(327L, 828L, 1124L, 6352L, 30739L, 
+    40437L, 5820L, 1091L, 355L), `Total Births` = c(899L, 1389L, 
+    2063L, 12677L, 55711L, 90814L, 12503L, 2200L, 722L), `Percent Cesarean` = c(36.4, 
+    59.6, 54.5, 50.1, 55.2, 44.5, 46.5, 49.6, 49.2)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)), `Higher Education Incomplete` = structure(list(
+    preterm = structure(1:9, .Label = c("Extremely Preterm", 
+    "Very Preterm", "Premature", "Late Premature", "Early Term", 
+    "Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(36L, 41L, 69L, 431L, 1694L, 2962L, 377L, 52L, 
+    27L), Cesarean = c(49L, 127L, 160L, 943L, 6083L, 5272L, 501L, 
+    109L, 28L), `Total Births` = c(85L, 168L, 229L, 1374L, 7777L, 
+    8234L, 878L, 161L, 55L), `Percent Cesarean` = c(57.6, 75.6, 
+    69.9, 68.6, 78.2, 64, 57.1, 67.7, 50.9)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)), `Higher Education` = structure(list(
+    preterm = structure(1:9, .Label = c("Extremely Preterm", 
+    "Very Preterm", "Premature", "Late Premature", "Early Term", 
+    "Term", "Late Term", "42 Weeks", "43 or 44 Weeks"), class = "factor"), 
+    Normal = c(83L, 76L, 106L, 874L, 4226L, 6252L, 693L, 97L, 
+    28L), Cesarean = c(155L, 367L, 539L, 4307L, 30326L, 21789L, 
+    1114L, 217L, 63L), `Total Births` = c(238L, 443L, 645L, 5181L, 
+    34552L, 28041L, 1807L, 314L, 91L), `Percent Cesarean` = c(65.1, 
+    82.8, 83.6, 83.1, 87.8, 77.7, 61.6, 69.1, 69.2)), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -9L)))
 ```
 
 ## Overview
