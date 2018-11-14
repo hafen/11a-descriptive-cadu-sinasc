@@ -76,7 +76,7 @@ knitr::opts_chunk$set(echo = TRUE)
 plot_gallery <- function(path) {
   f <- list.files(path, full.names = TRUE,
     pattern = ".png")
-  f2 <- gsub("plots/", "plots/_thumbs/", f)
+  f2 <- gsub("plots2/", "plots2/_thumbs/", f)
 
   library(png)
   img <- readPNG(f[1])
@@ -180,65 +180,65 @@ Every thumbnail image below can be clicked on for closer viewing.
 ## Birth weight z-score
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/brthwt_z_summ")
+plot_gallery("plots2/brthwt_z_summ")
 ```
 
 ## LBW
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/brthwt_cat_summ")
+plot_gallery("plots2/brthwt_cat_summ")
 ```
 
 ## SGA
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/sga_summ")
+plot_gallery("plots2/sga_summ")
 ```
 
 ## SGA by state
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/sga_rf_geo_summ")
+# plot_gallery("plots2/sga_rf_geo_summ")
 ```
 
 ## LGA
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/lga_summ")
+plot_gallery("plots2/lga_summ")
 ```
 
 ## LGA by state
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/lga_rf_geo_summ")
+plot_gallery("plots2/lga_rf_geo_summ")
 ```
 
 ## GA at birth
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/gest_weeks_summ")
+plot_gallery("plots2/gest_weeks_summ")
 ```
 
 ## GA at birth by state
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/preterm_rf_geo_summ")
+plot_gallery("plots2/preterm_rf_geo_summ")
 ```
 
 ## Cesarean
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/deliv_type_summ")
+plot_gallery("plots2/deliv_type_summ")
 ```
 
 ## Cesarean by state
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/cesarean_rf_geo_summ")
+plot_gallery("plots2/cesarean_rf_geo_summ")
 ```
 
 ## Variable distribution by year and state
 
 ```{r echo=FALSE, results="asis"}
-plot_gallery("plots/geo_time_summ")
+plot_gallery("plots2/geo_time_summ")
 ```
