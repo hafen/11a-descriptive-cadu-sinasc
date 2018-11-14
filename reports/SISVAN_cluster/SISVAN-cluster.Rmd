@@ -1,0 +1,136 @@
+---
+title: "SISVAN Clustering"
+author: Ryan Hafen
+output:
+  rmdformats::html_clean:
+    fig_width: 8
+    fig_height: 6
+    highlight: kate
+    thumbnails: false
+    lightbox: false
+    gallery: false
+    self_contained: false
+---
+
+
+<link rel="stylesheet" href="lib/magnific-popup.css">
+<script src="lib/jquery.magnific-popup.js"></script>
+
+<style>
+  .popup-gallery {
+    width: 800px
+  }
+  .item {
+    position: relative;
+    padding: 0px;
+    display: inline-block;
+  }
+  .item img {
+    margin: 0px;
+    padding: 0px;
+  }
+  .item-label {
+    position: absolute;
+    top: 0;
+    width: 150px;
+    text-align: center;
+    background: black;
+    opacity: 0.6;
+    color: white;
+  }
+  .mfp-title {
+    color: darkgray !important;
+    padding-left: 10px !important;
+  }
+  .mfp-counter {
+    color: darkgray !important;
+    padding-right: 10px !important;
+  }
+</style>
+
+<script>
+$(document).ready(function() {
+	$('.popup-gallery').magnificPopup({
+		delegate: 'a',
+		type: 'image',
+		tLoading: 'Loading plot #%curr%...',
+		mainClass: 'mfp-img-mobile',
+		gallery: {
+			enabled: true,
+			navigateByImgClick: true,
+			preload: [0,1] // Will preload 0 - before current, and 1 after the current image
+		},
+		image: {
+			tError: '<a href="%url%">The plot #%curr%</a> could not be loaded.',
+			titleSrc: function(item) {
+				return item.el.attr('title');
+			}
+		}
+	});
+});
+</script>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+plot_gallery <- function(path) {
+  f <- list.files(path, full.names = TRUE,
+    pattern = ".png")
+  f <- f[order(as.integer(gsub("\\.png", "", basename(f))))]
+  f2 <- gsub("clusters/", "clusters/_thumbs/", f)
+
+  library(png)
+  img <- readPNG(f[1])
+
+  dm <- dim(img)
+  width <- 150
+  height <- width * dm[1] / dm[2]
+
+  nm <- basename(f)
+  nm <- gsub("\\.png", "", nm)
+
+  aa <- paste0("<div class='item'><a href='", f, "' title='", basename(path), "/", nm, ".png'><img src='",
+    f2, "' width='", width, "', height='", height, "'><div class='item-label'>", nm, "</div></a></div>")
+
+  cat(paste0("<div class='popup-gallery'>",
+    paste(aa, collapse = ""), "</div>"))
+}
+
+```
+
+## Overview
+
+This document provides some preliminary clustering results for SISVAN-Web data, focusing on 0-5yrs and four variables: stunting, wasting, overweight, and overweight / stunting ratio.
+
+Below, plots are shown clustering the time series for each municipality in Brazil for which there is sufficient data, which we define as having at least 100 observations in each year for each variable. This was an arbitrary choice and can be adjusted, and resulted in examining about 2800 municipalities out of about 5500 municipalities.
+
+For each variable, below a plot is shown for 9 different possible choices of number of clusters, from 2 clusters to 10 clusters. For each plot, each individual municipality's time series is plotted in black and the centroid, or average value within the cluster, is plotted in red.
+
+These plots can help provide a preliminary understanding of different prevalent patterns of these measures over time. Although somewhat subjective, looking through the different choices of number of clusters can help identify at what point the patterns are distinguished enough to be sufficient.
+
+Once arriving on a sufficient number of clusters for each variable, further analysis can investigate other properties of the municipalities and how they are distributed within the different clusters.
+
+## Stunting
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("clusters/stunting")
+```
+
+## Wasting
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("clusters/wasting")
+```
+
+## Overweight
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("clusters/overweight_wh")
+```
+
+## Overweight / Stunting Ratio
+
+```{r echo=FALSE, results="asis"}
+plot_gallery("clusters/wh_stunting_ratio")
+```
+
